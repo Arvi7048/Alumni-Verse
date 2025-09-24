@@ -164,6 +164,10 @@ const Chat = () => {
     });
     socketRef.current = newSocket;
 
+    newSocket.on('connect_error', (err) => {
+      console.log('socket connect_error:', err?.message || err);
+    });
+
     newSocket.on('connect', () => {
       console.log('Socket connected');
       // Join user room for receiving conversation updates

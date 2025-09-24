@@ -3,10 +3,12 @@ const crypto = require("crypto")
 
 // Create transporter
 const createTransporter = () => {
-  console.log('Creating email transporter with:')
-  console.log('EMAIL_SERVICE:', process.env.EMAIL_SERVICE)
-  console.log('EMAIL_USER:', process.env.EMAIL_USER)
-  console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? '[SET]' : '[NOT SET]')
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('Creating email transporter with:')
+    console.log('EMAIL_SERVICE:', process.env.EMAIL_SERVICE)
+    console.log('EMAIL_USER:', process.env.EMAIL_USER)
+    console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? '[SET]' : '[NOT SET]')
+  }
   
   return nodemailer.createTransport({
     service: process.env.EMAIL_SERVICE || "gmail",
@@ -83,18 +85,24 @@ const sendOTPEmail = async (email, otp, type) => {
   }
 
   try {
-    console.log('Attempting to send email to:', email)
-    console.log('Email subject:', subject)
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Attempting to send email to:', email)
+      console.log('Email subject:', subject)
+    }
     const result = await transporter.sendMail(mailOptions)
-    console.log('Email sent successfully:', result.messageId)
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Email sent successfully:', result.messageId)
+    }
     return { success: true }
   } catch (error) {
     console.error("Email sending failed:", error)
-    console.error("Error details:", {
-      code: error.code,
-      command: error.command,
-      response: error.response
-    })
+    if (process.env.NODE_ENV !== 'production') {
+      console.error("Error details:", {
+        code: error.code,
+        command: error.command,
+        response: error.response
+      })
+    }
     return { success: false, error: error.message }
   }
 }
@@ -125,7 +133,9 @@ const sendAdminApprovalEmail = async (adminEmail, alumni) => {
   }
   try {
     const result = await transporter.sendMail(mailOptions)
-    console.log('Admin approval email sent:', result.messageId)
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Admin approval email sent:', result.messageId)
+    }
     return { success: true }
   } catch (error) {
     console.error("Admin approval email failed:", error)

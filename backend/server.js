@@ -58,14 +58,15 @@ app.use(helmet({
 }))
 // CORS configuration
 const allowedOrigins = [
-  process.env.FRONTEND_URL, // optional custom frontend URL from env
+  process.env.FRONTEND_URL, // Vercel frontend URL
   'http://localhost:3000',
   'http://127.0.0.1:3000',
   'http://localhost:5173',
   'http://127.0.0.1:5173',
   'http://localhost:4173',
   'http://127.0.0.1:4173',
-  'https://your-frontend-domain.com',
+  // Add your Vercel domain here after deployment
+  // 'https://your-project-name.vercel.app',
 ].filter(Boolean);
 
 const corsOptions = {
@@ -146,8 +147,9 @@ app.use("*", (req, res) => {
 // Socket.io setup
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: process.env.NODE_ENV === 'development' ? true : allowedOrigins,
     methods: ["GET", "POST"],
+    credentials: true,
   },
 })
 

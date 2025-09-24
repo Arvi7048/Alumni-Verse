@@ -101,7 +101,7 @@ const OTPSignup = () => {
     
     try {
       console.log('Sending OTP to:', formData.email);
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/otp-auth/send-registration-otp`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/otp-auth/send-registration-otp`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -153,7 +153,7 @@ const OTPSignup = () => {
       
       console.log('Sending verification data:', verificationData);
       
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/otp-auth/verify-registration-otp`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/otp-auth/verify-registration-otp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -242,7 +242,7 @@ const OTPSignup = () => {
     
     try {
       console.log('Resending OTP to:', formData.email);
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/otp-auth/resend-otp`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/otp-auth/resend-otp`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",

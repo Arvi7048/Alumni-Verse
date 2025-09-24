@@ -37,7 +37,7 @@ const OTPForgotPassword = () => {
     setLoading(true)
     setError("")
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/otp-auth/forgot-password`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/otp-auth/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -74,7 +74,7 @@ const OTPForgotPassword = () => {
     setLoading(true)
     setError("")
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/otp-auth/reset-password`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/otp-auth/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp, newPassword }),
@@ -101,7 +101,7 @@ const OTPForgotPassword = () => {
     setLoading(true)
     setError("")
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/otp-auth/resend-otp`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/otp-auth/resend-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, type: "forgot_password" }),

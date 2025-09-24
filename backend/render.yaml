@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: alumni-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: EMAIL_SERVICE
+        value: gmail
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: PAYTM_MERCHANT_ID
+        sync: false
+      - key: PAYTM_MERCHANT_KEY
+        sync: false
+      - key: PAYTM_WEBSITE
+        value: WEBSTAGING
+      - key: PAYTM_CHANNEL_ID
+        value: WEB
+      - key: PAYTM_INDUSTRY_TYPE_ID
+        value: Retail
+      - key: PAYTM_CALLBACK_URL
+        sync: false

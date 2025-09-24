@@ -1,9 +1,10 @@
 // API Configuration
+// API Configuration
 export const API_CONFIG = {
   // Base URL for socket connection
-  BASE_URL: 'http://localhost:5000',
+  BASE_URL: process.env.NEXT_PUBLIC_BASE_URL || process.env.REACT_APP_BASE_URL ,
   // Base URL for API requests
-  API_BASE_URL: 'http://localhost:5000/api',
+  API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_URL ,
   
   // Authentication endpoints
   AUTH: {

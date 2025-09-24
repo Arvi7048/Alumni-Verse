@@ -51,11 +51,10 @@ router.post("/conversations", auth, async (req, res) => {
 // @access  Private
 router.get("/conversations", auth, async (req, res) => {
   try {
-    // Return only conversations the user participates in that have a lastMessage
+    // Return conversations the user participates in (including those without messages)
     const conversations = await Conversation.find({
       participants: req.user.id,
       isActive: true,
-      lastMessage: { $exists: true, $ne: null }, // IMPORTANT: only conversations with at least one message
     })
       .populate("participants", "name profileImage batch branch")
       .populate({

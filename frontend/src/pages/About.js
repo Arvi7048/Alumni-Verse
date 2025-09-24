@@ -37,7 +37,7 @@ const About = () => {
     {
       name: "Arvind Gautam",
       role: "Platform Director",
-      image: "/images/team/arvind.jpg",
+      image: "/images/team/arvind.png",
       bio: "Class of 2026, Computer Science(AI). Former tech executive with 15+ years of experience.",
     },
     {
