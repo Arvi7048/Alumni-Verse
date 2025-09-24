@@ -10,10 +10,10 @@ const dotenv = require("dotenv")
 // Load environment variables
 if (process.env.NODE_ENV !== "production") {
   const envPath = path.resolve(__dirname, ".env")
-  console.log(`Loading environment variables from: ${envPath}`)
-  const result = dotenv.config({ path: envPath })
+console.log(`Loading environment variables from: ${envPath}`)
+const result = dotenv.config({ path: envPath })
 
-  if (result.error) {
+if (result.error) {
     console.warn("No .env file found, but continuing since it's not production.")
   } else {
     console.log("Environment variables loaded successfully from .env")
