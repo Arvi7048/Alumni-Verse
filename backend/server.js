@@ -7,27 +7,30 @@ const { Server } = require("socket.io")
 const path = require("path")
 const dotenv = require("dotenv")
 
-// Load environment variables with explicit path
-const envPath = path.resolve(__dirname, '.env')
-console.log(`Loading environment variables from: ${envPath}`)
-const result = dotenv.config({ path: envPath })
+// Load environment variables
+if (process.env.NODE_ENV !== "production") {
+  const envPath = path.resolve(__dirname, ".env")
+  console.log(`Loading environment variables from: ${envPath}`)
+  const result = dotenv.config({ path: envPath })
 
-if (result.error) {
-  console.error('Error loading .env file:', result.error)
-  process.exit(1)
+  if (result.error) {
+    console.warn("No .env file found, but continuing since it's not production.")
+  } else {
+    console.log("Environment variables loaded successfully from .env")
+  }
+} else {
+  console.log("Production mode - relying on Render environment variables")
 }
 
-// Log that environment was loaded successfully
-console.log('Environment variables loaded successfully')
-console.log('NODE_ENV:', process.env.NODE_ENV)
-console.log('EMAIL_SERVICE:', process.env.EMAIL_SERVICE ? 'Set' : 'Not set')
-console.log('ADMIN_EMAIL:', process.env.ADMIN_EMAIL || 'Not set')
+console.log("NODE_ENV:", process.env.NODE_ENV)
+console.log("EMAIL_SERVICE:", process.env.EMAIL_SERVICE ? "Set" : "Not set")
+console.log("ADMIN_EMAIL:", process.env.ADMIN_EMAIL || "Not set")
 
 const connectDB = require("./config/database")
 const { errorHandler } = require("./middleware/errorHandler")
 const { socketAuth } = require("./middleware/auth")
-const paytmRoutes = require('./routes/paytm');
-const paytmCallbackRoutes = require('./routes/paytmCallback');
+const paytmRoutes = require("./routes/paytm")
+const paytmCallbackRoutes = require("./routes/paytmCallback")
 
 // Import routes
 const authRoutes = require("./routes/auth")
@@ -52,51 +55,48 @@ const server = createServer(app)
 connectDB()
 
 // Security middleware
-// Allow cross-origin resource loading for static images (uploads) to prevent NotSameOrigin blocking
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" }
-}))
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  })
+)
+
 // CORS configuration
 const allowedOrigins = [
-  process.env.FRONTEND_URL, // Vercel frontend URL
-  'http://localhost:3000',
-  'http://127.0.0.1:3000',
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
-  'http://localhost:4173',
-  'http://127.0.0.1:4173',
-  // Add your Vercel domain here after deployment
-  // 'https://your-project-name.vercel.app',
-].filter(Boolean);
+  process.env.FRONTEND_URL,
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:4173",
+  "http://127.0.0.1:4173",
+].filter(Boolean)
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl, postman)
-    if (!origin) return callback(null, true);
+    if (!origin) return callback(null, true)
 
-    // In development, allow all origins for easier testing
-    if (process.env.NODE_ENV === 'development') {
-      return callback(null, true);
+    if (process.env.NODE_ENV === "development") {
+      return callback(null, true)
     }
 
-    // In other environments, allow only specific domains
     if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
+      return callback(null, true)
     }
 
-    return callback(new Error('Not allowed by CORS'));
+    return callback(new Error("Not allowed by CORS"))
   },
   credentials: true,
-  optionsSuccessStatus: 200 // For legacy browser support
-};
+  optionsSuccessStatus: 200,
+}
 
-app.use(cors(corsOptions));
+app.use(cors(corsOptions))
 
-// Rate limiting - disabled in development
-if (process.env.NODE_ENV === 'production') {
+// Rate limiting (only in production)
+if (process.env.NODE_ENV === "production") {
   const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
+    windowMs: 15 * 60 * 1000,
+    max: 100,
     message: "Too many requests from this IP, please try again later.",
   })
   app.use("/api/", limiter)
@@ -124,8 +124,8 @@ app.use("/api/upload", uploadRoutes)
 app.use("/api/admin", adminRoutes)
 app.use("/api/dashboard", dashboardRoutes)
 app.use("/api/ai", aiRoutes)
-app.use('/api/paytm', paytmRoutes);
-app.use('/api/paytm', paytmCallbackRoutes);
+app.use("/api/paytm", paytmRoutes)
+app.use("/api/paytm", paytmCallbackRoutes)
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
@@ -147,7 +147,7 @@ app.use("*", (req, res) => {
 // Socket.io setup
 const io = new Server(server, {
   cors: {
-    origin: process.env.NODE_ENV === 'development' ? true : allowedOrigins,
+    origin: process.env.NODE_ENV === "development" ? true : allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -160,20 +160,16 @@ io.use(socketAuth)
 io.on("connection", (socket) => {
   console.log(`User ${socket.userId} connected`)
 
-  // Join user to their personal room
   socket.join(`user_${socket.userId}`)
 
-  // Handle joining conversation rooms
   socket.on("joinConversation", (conversationId) => {
     socket.join(`conversation_${conversationId}`)
   })
 
-  // Handle leaving conversation rooms
   socket.on("leaveConversation", (conversationId) => {
     socket.leave(`conversation_${conversationId}`)
   })
 
-  // Handle disconnect
   socket.on("disconnect", () => {
     console.log(`User ${socket.userId} disconnected`)
   })
